@@ -4,6 +4,7 @@ import { Buffer } from "buffer";
 //import FeedCard from "./DataFormat";
 import stockSymbols from "../Data/StockSymbols";
 import Name from "./Stockname";
+import StockDetails from "./StockDetails";
 
 
 const instrumentkeys = stockSymbols;
@@ -98,6 +99,7 @@ function MarketDataFeed({ token }) {
             JSON.stringify(response),
            // response,
           ]);
+          //console.log(feedData);
         };
 
         ws.onerror = (error) => {
@@ -122,23 +124,9 @@ function MarketDataFeed({ token }) {
     ) : (
       <>
         <h1>LTPC Values</h1>
-        <ul>
-          {Object.entries(feedData).map(([symbol, data]) => (
-            <li key={symbol} style={{border: '2px solid red'}}>
-              <p>Symbol: {symbol}</p>
-              <p>LTP: {data.ff.marketFF.ltpc.ltp}</p>
-              {/* {data && data.ff && data.ff.marketFF && data.ff.marketFF.ltpc && (
-                <>
-                  <p>LTP: {data.ff.marketFF.ltpc.ltp}</p>
-                  <p>LTQ: {data.ff.marketFF.ltpc.ltq}</p>
-                  <p>CP: {data.ff.marketFF.ltpc.cp}</p>
-                </>
-              )} */}
-               {/* {JSON.stringify(data)} */}
-               {data}
-            </li>
-          ))}
-        </ul>
+
+        <StockDetails stockData={feedData} />
+        {feedData}
       </>
     )}
   </div>
