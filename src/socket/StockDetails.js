@@ -1,17 +1,10 @@
 import React from 'react';
 
 const StockDetails = ({ stockData }) => {
-  if (!stockData) {
-    return <div>Loading or error handling...</div>; // You can replace this with your loading or error component
-  }
-
+  const parsedFeeds = JSON.parse(stockData);
   const renderStockDetails = () => {
-    return Object.keys(stockData.feeds).map(symbol => {
-      const { ltpc } = stockData.feeds[symbol]?.ff?.marketFF?.ltpc || {};
-
-      if (!ltpc) {
-        return null; // Skip rendering if ltpc is not available
-      }
+    return Object.keys(stockData).map(symbol => {
+      const { ltpc } = stockData[symbol].ff.marketFF.ltpc;
 
       return (
         <div key={symbol}>
