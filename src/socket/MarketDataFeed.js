@@ -5,6 +5,8 @@ import { Buffer } from "buffer";
 import stockSymbols from "../Data/StockSymbols";
 import Name from "./Stockname";
 import StockDetails from "./StockDetails";
+import Testing from "../Data/testing";
+import instrumentData from '../Data/NseStockData';
 
 
 const instrumentkeys = stockSymbols;
@@ -62,7 +64,17 @@ const decodeProfobuf = (buffer) => {
 function MarketDataFeed({ token }) {
   const [isConnected, setIsConnected] = useState(false);
   const [feedData, setFeedData] = useState([]);
+  const [instruments, setInstruments] = useState([]);
+  const [instrumentKeys, setInstrumentKeys] = useState(stockSymbols);
 
+  useEffect(() => {
+    console.log(instrumentData);
+    setInstruments(instrumentData);
+  }, []);
+  const getNameByInstrumentKey = (instrumentKey) => {
+    const instrument = instruments.find(item => item.instrument_key === instrumentKey);
+    return instrument ? instrument.name : 'Not Found';
+  };
   // Establish WebSocket connection
   useEffect(() => {
     const connectWebSocket = async (token) => {
@@ -96,10 +108,11 @@ function MarketDataFeed({ token }) {
           console.log(response);
           setFeedData((currentData) => [
             ...currentData,
-            JSON.stringify(response),
+            JSON.stringify(response.feeds),
+            //response.feeds,r
            // response,
           ]);
-          //console.log(feedData);
+          console.log(Object.entries(response.feeds));
         };
 
         ws.onerror = (error) => {
@@ -116,18 +129,35 @@ function MarketDataFeed({ token }) {
     initProtobuf();
     connectWebSocket(token);
   }, [token]);
-
+  
+  
   return (
-    <div>
-    {Object.keys(feedData).length === 0 ? (
-      <p>Loading data...</p>
-    ) : (
-      <>
-        <h1>LTPC Values</h1>
-
-        <StockDetails stockData={feedData} />
-        {feedData}
-      </>
+    <div className="feed-container">
+    <div className="header-section">
+      <h1>Market Feed</h1>
+      <h3 className={`status ${isConnected ? "connected" : "not-connected"}`}>
+        Status: <span>{isConnected ? "Connected" : "Not Connected"}</span>
+      </h3>
+    </div>
+    {isConnected && (
+      <div className="feed-section">
+        <div className="title">Feed</div>
+        <div className=""> 
+          {feedData.map((data, index) => (
+            <div key={index} className="feed-item stocksContainer">
+              {instrumentkeys.map(instrumentkey => (
+                    <div key={instrumentkey} className="stockCard" style={{border: '2px solid red', margin: '10px', padding: '10px'}}>
+                      <p>{getNameByInstrumentKey(instrumentkey)}</p>
+                      <p><b>CP</b>: {JSON.stringify(JSON.parse(data)[instrumentkey].ff.marketFF.ltpc.cp)}</p>
+                      <p><b>CP</b>: {JSON.stringify(JSON.parse(data)[instrumentkey].ff.marketFF.ltpc.ltp)}</p>
+                      <p><b>CP</b>: {JSON.stringify(JSON.parse(data)[instrumentkey].ff.marketFF.ltpc.ltq)}</p>
+                      <p><b>CP</b>: {JSON.stringify(JSON.parse(data)[instrumentkey].ff.marketFF.ltpc.ltt)}</p>
+                    </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      </div>
     )}
   </div>
   );
