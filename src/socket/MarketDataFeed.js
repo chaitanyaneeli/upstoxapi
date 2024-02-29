@@ -5,7 +5,7 @@ import { Buffer } from "buffer";
 import stockSymbols from "../Data/StockSymbols";
 import Name from "./Stockname";
 import StockDetails from "./StockDetails";
-import Testing from "../Data/testing";
+//import Testing from "../Data/testing";
 import instrumentData from '../Data/NseStockData';
 
 
